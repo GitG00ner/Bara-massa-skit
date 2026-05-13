@@ -5,6 +5,9 @@ import cmath
 import re
 
 def nollstellen(a, b, c):
+    if a == 0:
+        print("ange en korrekt andragradsekvation")
+        return None, None
     b = b/a
     c = c/a
 
@@ -22,9 +25,9 @@ def clear():
 
 
 def sparade_svar():
-    if os.path.exists('spara_svar.json'):
+    if os.path.exists('Miniräknare\spara_svar.json'):
         try:
-            with open('spara_svar.json', 'r', encoding='utf-8') as f:
+            with open('Miniräknare\spara_svar.json', 'r', encoding='utf-8') as f:
                 data = json.load(f)
             if isinstance(data, list):
                 return data
@@ -170,7 +173,7 @@ def mainloop():
     while run:
         #snabbt och smidigt sparar svaren till json på direkten, det är vad jag kallar code so clean it sparkles!
         if spara_inte_varde == False:
-            with open('spara_svar.json', 'w') as f:
+            with open('Miniräknare\spara_svar.json', 'w') as f:
                 json.dump(svar_lista, f, indent=2)
         else:
             spara_inte_varde = False
@@ -179,17 +182,21 @@ def mainloop():
         metod = input("Vilken metod vill du köra? (1 (addition), 2 (subtration), 3 (multiplication), 4 (division), 5 (tidigare svar), 6 (intelligent), 7 (nollpunkter) eller q för att avsluta) ")
         
         if metod == "1":
-            basic_kalk("+", svar_lista)
+            svar = basic_kalk("+", svar_lista)
+            print(f"Svar: {svar}")
 
         elif metod == "2":
-            basic_kalk("-", svar_lista)
-
+            svar = basic_kalk("-", svar_lista)
+            print(f"Svar: {svar}")
 
         elif metod == "3":
-            basic_kalk("*", svar_lista)
+            svar = basic_kalk("*", svar_lista)
+            print(f"Svar: {svar}")
+
 
         elif metod == "4":
-            basic_kalk("/", svar_lista)
+            svar = basic_kalk("/", svar_lista)
+            print(f"Svar: {svar}")
 
         elif metod == "q":
 
@@ -214,7 +221,8 @@ def mainloop():
 
             svar_lista.append(nollstellen(a, b, c))
             x1, x2 = nollstellen(a, b, c)
-            print(f"Nollpunkter: {x1} och {x2}")
+            if x1 is not None and x2 is not None:
+                print(f"Nollpunkter: {x1} och {x2}")
             spara_inte_varde = True
 
         else:
