@@ -2,22 +2,62 @@ import os
 import json
 import pygame
 import cmath
-import re
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def update_plot(a, b, c, event_ax, line, fig):
+    try:
+        # 1. Get the new window limits
+        xlim = event_ax.get_xlim()
+        
+        # 2. Calculate new data for exactly what is visible
+        x_new = np.linspace(xlim[0], xlim[1], 2000)
+        y_new = a*x_new**2 + b*x_new + c
+        
+        # 3. Update the line
+        line.set_data(x_new, y_new)
+                
+        # 5. Redraw the canvas
+        fig.canvas.draw_idle()
+    except:
+        # This catches "in-progress" errors during fast zooming
+        pass
+
+def andragradsfunktion_visualisering(a, b, c, n1, n2):
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    x = np.linspace(-10, 10, 1000)
+    y = a*x**2 + b*x + c
+    
+    
+    line, = ax.plot(x, y, color='blue', lw=2)
+
+    plt.title(f"Andragradsfunktion\nNollställen: {n1} och {n2}")
+    plt.grid(True, which='both', linestyle='--', alpha=0.5)
+    plt.axhline(0, color='black', lw=1) # x-axis
+    plt.axvline(0, color='black', lw=1) # y-axis
+
+    ax.callbacks.connect('xlim_changed', lambda e: update_plot(a, b, c, e, line, fig))
+
+    plt.show()
 
 def nollstellen(a, b, c):
     if a == 0:
-        print("ange en korrekt andragradsekvation")
+        print("Inte en andragradsfunktion!")
         return None, None
-    b = b/a
-    c = c/a
+    
+    # Standard pq-formel/abc-formel logic
+    d = (b**2) - (4*a*c)
+    x1 = (-b + cmath.sqrt(d)) / (2*a)
+    x2 = (-b - cmath.sqrt(d)) / (2*a)
 
-    x1 = -b/2 + cmath.sqrt((b/2)**2 - c)
-    x2 = -b/2 - cmath.sqrt((b/2)**2 - c)
+    andragradsfunktion_visualisering(a, b, c, x1, x2)
     return x1, x2
 
 def backgroundmusic():
     pygame.mixer.init()
-    pygame.mixer.music.load("energysound-stomp-drum-percussion-513744 (1).mp3")
+    pygame.mixer.music.load("Miniräknare\energysound-stomp-drum-percussion-513744 (1).mp3")
     pygame.mixer.music.play(-1)  # Spela i loop
 
 def clear():
@@ -157,6 +197,8 @@ def intelligent_calculator(svar_lista):
         print("Felaktig input.")
 
 def mainloop():
+    
+    clear()
     
     musik = input("Vill du ha musik? (ja/nej) ")
     if musik == "ja":
